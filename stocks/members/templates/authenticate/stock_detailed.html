@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="grey-bg container-fluid">
+  <section id="minimal-statistics">
+    <div class="row">
+      <div class="col">
+        <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="btn btn-danger"><span>Home</span></a></li>
+            <li class="breadcrumb-item"><a href="{% url 'create-alarm' %}" class="btn btn-success"><span>Add New Alarm</span></a></li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 mt-2 mb-1">
+          <h1 class="text-uppercase m-4">{{ object.title }}</h1>
+      </div>
+    </div>
+
+    <div class="row m-2">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="align-self-center">
+                  <i class="icon-pencil primary font-large-2 float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  <h2><strong>{{ object.price }}</strong></h2>
+                  <span>Último</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="align-self-center">
+                  <i class="icon-pencil primary font-large-2 float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  {% if "-" in object.variance %}
+                    <h2><strong class="font-weight-bold text-danger">{{ object.variance }}</strong></h2>
+                  {% elif "+" in object.variance %}
+                    <h2><strong class="font-weight-bold text-success">{{ object.variance }}</strong></h2>
+                  {% else %}
+                    <h2><strong class="font-weight-bold">{{ object.variance }}</strong></h2>
+                  {% endif %}
+                  <span>Variação</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="row m-2">
+      <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card rounded">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="align-self-center">
+                  <i class="icon-pencil primary font-large-2 float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  <h2><strong>{{ object.max }}</strong></h2>
+                  <span>Max</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card rounded">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="align-self-center">
+                  <i class="icon-pencil primary font-large-2 float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  <h2><strong>{{ object.min }}</strong></h2>
+                  <span>Min</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="align-self-center">
+                  <i class="icon-pencil primary font-large-2 float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  {% if "-" in object.variance_percentage %}
+                    <h2><strong class="font-weight-bold text-danger">{{ object.variance_percentage }}</strong></h2>
+                  {% elif "+" in object.variance_percentage %}
+                    <h2><strong class="font-weight-bold text-success">{{ object.variance_percentage }}</strong></h2>
+                  {% else %}
+                    <h2><strong class="font-weight-bold">{{ object.variance_percentage }}</strong></h2>
+                  {% endif %}
+                  <span>Var %</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<table class="table table-striped mt-4">
+  <thead>
+    <tr>
+      <th scope="col">Data</th>
+      <th scope="col">Ultimo</th>
+      <th scope="col">Abertura</th>
+      <th scope="col">Max</th>
+      <th scope="col">Min</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for data in history %}
+      <tr>
+        {% for key, item in data.items %}
+          <td>{{item}}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

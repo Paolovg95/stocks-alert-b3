@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Stocks unchained</title>
+  {% load bootstrap5 %}
+  {% load fontawesome_5 %}
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+  {% fontawesome_5_static %}
+
+</head>
+<style>
+  body {
+    background: #f4f4f4;
+  }
+</style>
+<body>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-warning" role="alert">
+          <strong>WOAH !!</strong> {{message}}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+  {% block content %}
+  {% endblock %}
+</body>
+
+</html>
