@@ -31,7 +31,8 @@ ALLOWED_HOSTS = []
 # CRON TIME LIMIT SPECIFIC
 # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
 CRONJOBS = [
-    ('*/1 * * * *', 'scraping.cron.my_scheduled_job')
+    ('0 * * *', 'scraping.cron.my_scheduled_job')
+    # ('*/1 * * * *', 'scraping.cron.my_scheduled_job')
 ]
 
 # Application definition
