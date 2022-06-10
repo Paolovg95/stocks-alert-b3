@@ -26,13 +26,11 @@ SECRET_KEY = 'django-insecure-+3&-q89&#91gahs!_-43nmv+r2po6qxe$xt9g788stws_8$q!f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
-
 # CRON TIME LIMIT SPECIFIC
 # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
 CRONJOBS = [
-    ('0 * * *', 'scraping.cron.my_scheduled_job')
-    # ('*/1 * * * *', 'scraping.cron.my_scheduled_job')
+    # (' * * *', 'scraping.cron.my_scheduled_job')
+    ('*/1 * * * *', 'scraping.cron.my_scheduled_job')
 ]
 
 # Application definition
@@ -42,7 +40,7 @@ CRONJOBS = [
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'vargasdegasperi@orastudio.tech'
-# EMAIL_HOST_PASSWORD = 'xxxxxxxxxx'
+# EMAIL_HOST_PASSWORD = 'Abc554433221100?'
 # ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 
