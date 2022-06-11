@@ -15,6 +15,7 @@ import environ
 
 env = environ.Env()
 environ.Env.read_env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-+3&-q89&#91gahs!_-43nmv+r2po6qxe$xt9g788stws_8$q!f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # CRON TIME LIMIT SPECIFIC
 # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
