@@ -399,8 +399,48 @@ A very simple CRUD(Create, Read, Update, Delete) processes to create Alarms for 
 
 <img width="1301" alt="Screen Shot 2022-06-06 at 10 00 28 AM" src="https://user-images.githubusercontent.com/106985050/172273974-7364d29d-0700-4897-8ad9-48759533c361.png">
 
+On settings.py
+To make the Email Notification Successfully, firstly, I needed to make some configuration in my Gmail Account, adding a 2F Authentication to Allow our Django App logi to send the email alert. Secondly, the .env files setup and installation. To use environmental variables we installed:
+
+pip install django-environ
+
+Adding at the beggining of the Module, making it available for settings.
+
+.env file contains all the Key-value pairs to use it then in our Cron.py file where we will compare the current Stock Price with ours every 30min.
+
+
+
+
+    EMAIL_HOST_USER=paolo@email.com
+    EMAIL_HOST_PASSWORD='password'
+    RECIPIENT_ADDRESS=paolo9517@gmail.com ## Testing purpose
+
+    import os
+    import environ
+
+    env = environ.Env()
+    environ.Env.read_env()
+
+    # CRON TIME LIMIT SPECIFIC
+    # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
+    CRONJOBS = [
+        ('*/30 * * * *', 'scraping.cron.my_scheduled_job') ## Check and send alerts every 30min
+    ]
+
+    # Application definition
+    # EMAIL CONFIGURATIONS
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+    RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
+
 
 To Automate the Email notification process, Crontab is the tool we choose, lets you run Django/Python code on a recurring basis proving basic plumbing to track and execute tasks. The two most common ways in which most people go about this is either writing custom python scripts or a management command per cron.py![image](https://user-images.githubusercontent.com/106985050/172274006-03f60d3a-01ba-4945-b758-2522dca3f538.png)
+
+
 
     from .models import Stock, AlarmStock
     from django.conf import settings
@@ -436,42 +476,10 @@ To Automate the Email notification process, Crontab is the tool we choose, lets 
 
                 alarm.save()
 
-On settings.py
-To make the Email Notification Successfully, firstly, I needed to make some configuration in my Gmail Account, adding a 2F Authentication to Allow our Django App logi to send the email alert. Secondly, the .env files setup and installation. To use environmental variables we installed:
-
-pip install django-environ
-
-Adding at the beggining of the Module, making it available for settings.
-
-.env file contains all the Key-value pairs to use it then in our Cron.py file where we will compare the current Stock Price with ours every 30min.
 
 
 
-    EMAIL_HOST_USER=paolo@email.com
-    EMAIL_HOST_PASSWORD='password'
-    RECIPIENT_ADDRESS=paolo9517@gmail.com ## Testing purpose
 
-    import os
-    import environ
-
-    env = environ.Env()
-    environ.Env.read_env()
-
-    # CRON TIME LIMIT SPECIFIC
-    # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
-    CRONJOBS = [
-        ('*/30 * * * *', 'scraping.cron.my_scheduled_job') ## Check and send alerts every 30min
-    ]
-
-    # Application definition
-    # EMAIL CONFIGURATIONS
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-    RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
 
 
 Email Notification Every 1 MINUTE for a Buying opportunity. Set every 1 MINUTE for Testing Purposes.
