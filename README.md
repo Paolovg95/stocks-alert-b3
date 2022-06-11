@@ -438,9 +438,7 @@ Adding at the beggining of the Module, making it available for settings.
     RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
 
 
-To Automate the Email notification process, Crontab is the tool we choose, lets you run Django/Python code on a recurring basis proving basic plumbing to track and execute tasks. The two most common ways in which most people go about this is either writing custom python scripts or a management command per cron.py![image](https://user-images.githubusercontent.com/106985050/172274006-03f60d3a-01ba-4945-b758-2522dca3f538.png)
-
-
+To Automate the Email notification process, Crontab is the tool we choose, lets you run Django/Python code on a recurring basis proving basic plumbing to track and execute tasks. The two most common ways in which most people go about this is either writing custom python scripts or a management command per cron.py.
 
     from .models import Stock, AlarmStock
     from django.conf import settings
@@ -475,11 +473,6 @@ To Automate the Email notification process, Crontab is the tool we choose, lets 
                     alarm.status = "Pending"
 
                 alarm.save()
-
-
-
-
-
 
 
 Email Notification Every 1 MINUTE for a Buying opportunity. Set every 1 MINUTE for Testing Purposes.
