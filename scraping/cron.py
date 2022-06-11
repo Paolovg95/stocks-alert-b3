@@ -1,23 +1,33 @@
-from .models import Stock
-import smtplib
-from email.message import EmailMessage
-
+from .models import Stock, AlarmStock
+from django.conf import settings
+from django.core.mail import send_mail
 
 def my_scheduled_job():
 
+    stocks = Stock.objects.all()
+    alarms = AlarmStock.objects.all()
 
-    # url = "https://stocks-price-alert-b3.herokuapp.com/"
-    # email = EmailMessage()
-    # email['from'] = 'Python <vargasdegasperi@orastudio.tech>'
-    # email['to'] = 'paolo9517@gmail.com'
-    # email['subject'] = 'Stock Alert'
+    for alarm in alarms:
+        for stock in stocks:
+            if alarm.stock.id == stock.id:
+                if alarm.buying_at >= stock.price:
+                    send_mail(
+                        subject="Stock Alert - Buying Opportunity",
+                        message=f"Buying Opportunity for {alarm.stock.title} - Price at {stock.price}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.RECIPIENT_ADDRESS]
+                        # Recipient can be modified for 'alarm.user.email'
+                    )
+                    alarm.status = "BUY"
+                elif alarm.selling_at <= stock.price:
+                    send_mail(
+                        subject="Stock Alert - Selling Opportunity",
+                        message=f"Selling Opportunity for {alarm.stock.title} - Price at {stock.price}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.RECIPIENT_ADDRESS]
+                    )
+                    alarm.status = "SELL"
+                else:
+                    alarm.status = "Pending"
 
-    # email.set_content('New Opportunity {}'.format(url))
-
-    # with smtplib.SMTP(host='smtp.gmail.com', port=587) as smtp:
-    #     smtp.ehlo()
-    #     smtp.starttls()
-    #     smtp.ehlo()
-
-    #     smtp.login('vargasdegasperi@orastudio.tech', 'password')
-    #     smtp.send_message(email)
+                alarm.save()
