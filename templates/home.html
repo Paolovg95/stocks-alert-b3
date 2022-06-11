@@ -96,13 +96,18 @@
                 <td><strong>{{item.stock.title}}</strong></td>
                 <td>{{ item.buying_at }}</td>
                 <td>{{ item.selling_at }}</td>
-                <td><strong>{{ item.status }}</strong></td>
+                  {% if item.status == "BUY" %}
+                    <td><strong class="font-weight-bold text-success" >{{ item.status }}</strong></td>
+                  {% elif item.status == "SELL" %}
+                    <td><strong class="font-weight-bold text-warning" >{{ item.status }}</strong></td>
+                  {% else %}
+                    <td><strong>{{ item.status }}</strong></td>
+                  {% endif %}
                 <td>{{item.created_at}}</td>
                 <td>
                   <a href="{% url 'update-alarm' id=item.id %}" class="edit text-primary">Edit</a>
                   <a href="{% url 'delete-alarm' id=item.id %}" class="delete text-danger">Delete</a>
                 </td>
-
               </tr>
               {% endfor %}
             </tbody>
