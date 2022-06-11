@@ -409,11 +409,15 @@ Adding at the beggining of the Module, making it available for settings.
 .env file contains all the Key-value pairs to use it then in our Cron.py file where we will compare the current Stock Price with ours every 30min.
 
 
-
+.env
 
     EMAIL_HOST_USER=paolo@email.com
     EMAIL_HOST_PASSWORD='password'
     RECIPIENT_ADDRESS=paolo9517@gmail.com ## Testing purpose
+
+
+settings.py
+
 
     import os
     import environ
