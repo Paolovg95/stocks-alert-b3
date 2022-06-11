@@ -403,55 +403,93 @@ A very simple CRUD(Create, Read, Update, Delete) processes to create Alarms for 
 To Automate the Email notification process, Crontab is the tool we choose, lets you run Django/Python code on a recurring basis proving basic plumbing to track and execute tasks. The two most common ways in which most people go about this is either writing custom python scripts or a management command per cron.py![image](https://user-images.githubusercontent.com/106985050/172274006-03f60d3a-01ba-4945-b758-2522dca3f538.png)
 
     from .models import Stock, AlarmStock
-    from django.core.mail import EmailMessage
-    import requests
     from django.conf import settings
+    from django.core.mail import send_mail
 
-    def my_scheduled_job(request):
-        user = request.user
-        print(user)
-        queryset = AlarmStock.objects.filter(user=user)
-        stocks = Stock.objects.all()
+    def my_scheduled_job():
+
+    stocks = Stock.objects.all()
+    alarms = AlarmStock.objects.all()
+
+    for alarm in alarms:
         for stock in stocks:
-            for alarm in queryset:
-                if stock.id == alarm.stock.id:
-                    if alarm.buying_at <= stock.price:
-                    user_email = alarm.user.email
-                        alarm.status = "Buying Opportunity"
-                        EmailMessage(
-                            'Alarm Stock Alert',
-                            'Buying Opportunity',
-                            settings.EMAIL_HOST_USER,
-                            [user_email],
-                        )
-                    if alarm.selling_at >= stock.price:
-                        alarm.status = "Selling Opportunity"
-                        EmailMessage(
-                            'Alarm Stock Alert',
-                            'Selling Opportunity:',
-                            settings.EMAIL_HOST_USER,
-                            [user_email],
-                        )
+            if alarm.stock.id == stock.id:
+                if alarm.buying_at >= stock.price:
+                    send_mail(
+                        subject="Stock Alert - Buying Opportunity",
+                        message=f"Buying Opportunity for {alarm.stock.title} - Buying at: {alarm.buying_at} Current Price at: {stock.price}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.RECIPIENT_ADDRESS]
+                        # Recipient can be modified for 'alarm.user.email'
+                    )
+                    alarm.status = "BUY"
+                elif alarm.selling_at <= stock.price:
+                    send_mail(
+                        subject="Stock Alert - Selling Opportunity",
+                        message=f"Selling Opportunity for {alarm.stock.title} - Selling at: {alarm.selling_at} Current Price at {stock.price}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.RECIPIENT_ADDRESS]
+                    )
+                    alarm.status = "SELL"
+                else:
+                    alarm.status = "Pending"
 
+                alarm.save()
 
 On settings.py
-I couldn't make the Email Notification Successfully since I had some issues in regards to my Gmail Account Security Settings. But the main concept and setup is develop in the code for future uses.
+To make the Email Notification Successfully, firstly, I needed to make some configuration in my Gmail Account, adding a 2F Authentication to Allow our Django App logi to send the email alert. Secondly, the .env files setup and installation. To use environmental variables we installed:
+
+pip install django-environ
+
+Adding at the beggining of the Module, making it available for settings.
+
+.env file contains all the Key-value pairs to use it then in our Cron.py file where we will compare the current Stock Price with ours every 30min.
+
+
+
+    EMAIL_HOST_USER=paolo@email.com
+    EMAIL_HOST_PASSWORD='password'
+    RECIPIENT_ADDRESS=paolo9517@gmail.com ## Testing purpose
+
+    import os
+    import environ
+
+    env = environ.Env()
+    environ.Env.read_env()
 
     # CRON TIME LIMIT SPECIFIC
     # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
     CRONJOBS = [
-        ('*/1 * * * *', 'scraping.cron.my_scheduled_job')
+        ('*/30 * * * *', 'scraping.cron.my_scheduled_job') ## Check and send alerts every 30min
     ]
 
     # Application definition
     # EMAIL CONFIGURATIONS
-    # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    # EMAIL_HOST = 'smtp.gmail.com'
-    # EMAIL_PORT = 587
-    # EMAIL_USE_TLS = True
-    # EMAIL_HOST_USER = 'vargasdegasperi@orastudio.tech'
-    # EMAIL_HOST_PASSWORD = 'xxxxxxxxxx'
-    # ACCOUNT_EMAIL_VERIFICATION = 'none'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+    RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
+
+
+Email Notification Every 1 MINUTE for a Buying opportunity. Set every 1 MINUTE for Testing Purposes.
+
+
+<img width="1063" alt="Screen Shot 2022-06-11 at 2 24 00 AM" src="https://user-images.githubusercontent.com/26658714/173176234-e8e1d25f-bc4e-4f5c-9bdb-d64e6d2c94c7.png">
+
+Status Updated Automatically every time an Alert is Sent. Buying or Selling Opportunity
+
+<img width="1424" alt="Screen Shot 2022-06-11 at 2 30 56 AM 1" src="https://user-images.githubusercontent.com/26658714/173176335-2df07d41-4de0-4967-8aa4-5d005765739c.png">
+
+       {% if item.status == "BUY" %}
+        <td><strong class="font-weight-bold text-success" >{{ item.status }}</strong></td>
+      {% elif item.status == "SELL" %}
+        <td><strong class="font-weight-bold text-warning" >{{ item.status }}</strong></td>
+      {% else %}
+        <td><strong>{{ item.status }}</strong></td>
+      {% endif %}
 
 Finally for deploying, the project supports Heroku cloud platform as a service.
 To prevent deploying unnecessary files.
