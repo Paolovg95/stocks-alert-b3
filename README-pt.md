@@ -407,11 +407,14 @@ Em settings.py para fazer a notificação por e-mail com sucesso, primeiro preci
 
 O arquivo .env contém todos os pares Key-Pair para usá-lo em nosso arquivo Cron.py, onde compararemos o preço atual da ação com o nosso a cada 30 minutos.
 
+.env 
+
     EMAIL_HOST_USER=paolo@email.com
     EMAIL_HOST_PASSWORD='password'
     RECIPIENT_ADDRESS=paolo9517@gmail.com ## Testing purpose
 
 
+settings.py
 
     import os
     import environ
