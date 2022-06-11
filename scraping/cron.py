@@ -13,7 +13,7 @@ def my_scheduled_job():
                 if alarm.buying_at >= stock.price:
                     send_mail(
                         subject="Stock Alert - Buying Opportunity",
-                        message=f"Buying Opportunity for {alarm.stock.title} - Price at {stock.price}",
+                        message=f"Buying Opportunity for {alarm.stock.title} - Buying at: {alarm.buying_at} Current Price at: {stock.price}",
                         from_email=settings.EMAIL_HOST_USER,
                         recipient_list=[settings.RECIPIENT_ADDRESS]
                         # Recipient can be modified for 'alarm.user.email'
@@ -22,7 +22,7 @@ def my_scheduled_job():
                 elif alarm.selling_at <= stock.price:
                     send_mail(
                         subject="Stock Alert - Selling Opportunity",
-                        message=f"Selling Opportunity for {alarm.stock.title} - Price at {stock.price}",
+                        message=f"Selling Opportunity for {alarm.stock.title} - Selling at: {alarm.selling_at} Current Price at {stock.price}",
                         from_email=settings.EMAIL_HOST_USER,
                         recipient_list=[settings.RECIPIENT_ADDRESS]
                     )
