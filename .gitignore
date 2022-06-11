@@ -141,3 +141,4 @@ GitHub.sublime-settings
 assets/__pycache__
 scraping/__pycache__
 
+.env
