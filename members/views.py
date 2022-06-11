@@ -3,8 +3,6 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from scraping.models import AlarmStock, Stock
-from django.core.mail import EmailMessage
-from django.conf import settings
 import requests
 from bs4 import BeautifulSoup
 from .forms import AlertStockForm
@@ -56,9 +54,6 @@ def my_alarms(request):
     context = {
         'object_list': queryset
     }
-
-
-
 
     return render(request, "authenticate/my_alarms.html", context)
 
