@@ -401,7 +401,43 @@ Uma vista detalhada dos Alertas do Usuário. Obtemos acesso às ações de ediç
 
 <img width="1301" alt="Screen Shot 2022-06-06 at 10 00 28 AM" src="https://user-images.githubusercontent.com/106985050/172273974-7364d29d-0700-4897-8ad9-48759533c361.png">
 
-Para automatizar o processo de notificação por e-mail, o Crontab é a ferramenta que escolhi, permite executar código Django/Python de forma recorrente, provando o encanamento básico para rastrear e executar tarefas. As duas maneiras mais comuns pelas quais a maioria das pessoas fazem isso é escrever scripts python personalizados ou um comando de gerenciamento por cron.py.
+Em settings.py para fazer a notificação por e-mail com sucesso, primeiro precisei fazer algumas configurações na minha conta do Gmail, adicionando uma autenticação 2F para permitir que nosso aplicativo Django faz Login e enviei alerta por e-mail.  Segundo, a configuração e instalação dos arquivos .env.  para usar variáveis de ambiente e aplicativo Django login enviasse o alerta por e-mail instalamos:
+
+           pip instalar django-environ
+
+O arquivo .env contém todos os pares Key-Pair para usá-lo em nosso arquivo Cron.py, onde compararemos o preço atual da ação com o nosso a cada 30 minutos.
+
+    EMAIL_HOST_USER=paolo@email.com
+    EMAIL_HOST_PASSWORD='password'
+    RECIPIENT_ADDRESS=paolo9517@gmail.com ## Testing purpose
+
+
+
+    import os
+    import environ
+
+    env = environ.Env()
+    environ.Env.read_env()
+
+    # CRON TIME LIMIT SPECIFIC
+    # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
+    CRONJOBS = [
+        ('*/30 * * * *', 'scraping.cron.my_scheduled_job') ## Check and send alerts every 30min
+    ]
+
+    # Application definition
+    # EMAIL CONFIGURATIONS
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+    RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
+
+
+Para automatizar o processo de notificação por e-mail, o Crontab é a ferramenta que escolhemos, permite executar código Django/Python de forma recorrente para rastrear e executar tarefas.
+
 
     from .models import Stock, AlarmStock
         from django.core.mail import EmailMessage
@@ -433,27 +469,17 @@ Para automatizar o processo de notificação por e-mail, o Crontab é a ferramen
                             settings.EMAIL_HOST_USER,
                             ['user.email'],
                         )
+Notificação por e-mail a cada 1 MINUTO para uma oportunidade de compra. Defina a cada 1 MINUTO para fins de teste.
 
-Em configurações.py
-Não consegui fazer a notificação por e-mail com sucesso, pois tive alguns problemas em relação às configurações de segurança da minha conta do Gmail. Mas o principal conceito e configuração é desenvolver no código para usos futuros.
+<img width="1063" alt="Screen Shot 2022-06-11 at 2 24 00 AM" src="https://user-images.githubusercontent.com/26658714/173176234-e8e1d25f-bc4e-4f5c-9bdb-d64e6d2c94c7.png">
 
-    # CRON TIME LIMIT SPECIFIC
-    # CURRENTLY 1 MINUTE, AVAILABLE FOR MODIFICATION
-    CRONJOBS = [
-        ('*/1 * * * *', 'scraping.cron.my_scheduled_job')
-    ]
 
-    # Application definition
-    # EMAIL CONFIGURATIONS
-    # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    # EMAIL_HOST = 'smtp.gmail.com'
-    # EMAIL_PORT = 587
-    # EMAIL_USE_TLS = True
-    # EMAIL_HOST_USER = 'vargasdegasperi@orastudio.tech'
-    # EMAIL_HOST_PASSWORD = 'xxxxxxxxxx'
-    # ACCOUNT_EMAIL_VERIFICATION = 'none'
+Status Atualizado Automaticamente sempre que um Alerta é Enviado. Oportunidade de compra ou venda
 
-Finalmente, para implantação, o projeto suporta a plataforma de nuvem Heroku como um serviço.
+<img width="1424" alt="Screen Shot 2022-06-11 at 2 30 56 AM 1" src="https://user-images.githubusercontent.com/26658714/173176335-2df07d41-4de0-4967-8aa4-5d005765739c.png">
+
+
+Finalmente, para implantação, o projeto suporta a plataforma de Cloud Heroku.
 Para evitar a implantação de arquivos desnecessários.
 Estes foram adicionados ao arquivo gitignore.
 
@@ -462,7 +488,7 @@ Estes foram adicionados ao arquivo gitignore.
       scraping/__pycache__
       
  
- Para inicializar um web dyno e migrar o banco de dados, o perfil foi adicionado à nossa pasta raiz.
+ Para inicializar um web dyno e migrar o banco de dados, o perfil foi adicionado à nossa Root file.
 
  
      web: gunicorn jobs.wsgi
