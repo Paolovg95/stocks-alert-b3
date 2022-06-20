@@ -2,13 +2,13 @@
 
 The purpose of this Project is to assist an investor in his decisions to buy/sell assets. To this end, he must periodically record the current price of B3's assets and also notify, via email, if there is a trading opportunity.
 
-The First Step to develop this Project is to define from where to get our necessary information, so the proper Web scraping can be don effectively. 
+The First Step to develop this Project is to define from where to get our necessary information, so the proper Web scraping can be don effectively.
 
-investing.com was our best option to consultation of stored prices, Save to DB, configure the assets to be monitored and parameterize the price tunnels for each asset and check frequency for each asset. 
+investing.com was our best option to consultation of stored prices, Save to DB, configure the assets to be monitored and parameterize the price tunnels for each asset and check frequency for each asset.
 
 
     class Stock(models.Model):
-    
+
     url = models.CharField(max_length=100,unique=True,null=True)
     title = models.CharField(max_length=250, unique=True)
     price = models.DecimalField(decimal_places=2, max_digits=303)
@@ -25,8 +25,8 @@ investing.com was our best option to consultation of stored prices, Save to DB, 
         ordering = ['title']
     class Admin:
         pass
-        
-        
+
+
 This is what we’ll automatically schedule at the infrastructure level in order to automate Web Scraping using BeautifulSoup4, preventing the duplicates and automatically update the Data if there are any changes calling:
 
 python manage.py scrape
@@ -92,14 +92,14 @@ python manage.py scrape
                 )
                 print('%s Created' % (name,))
         self.stdout.write( 'job complete' )
-        
+
 
 
 
 <img width="1100" alt="Screen Shot 2022-06-06 at 8 50 22 PM" src="https://user-images.githubusercontent.com/106985050/172272722-6db8a1f3-b449-47a9-af65-84cf5a3945ae.png">
 
 
-For our User Login and Registration, Django comes with a pretty nice user authentication system that we'll use for all of this. 
+For our User Login and Registration, Django comes with a pretty nice user authentication system that we'll use for all of this.
 Add Members App,  Add URLS.py file to Members App with Paths, Add Templates to Members App where we are going to add all the views corresponding to the Logged In Members.
 
     from django.urls import path
@@ -126,9 +126,9 @@ Add Members App,  Add URLS.py file to Members App with Paths, Add Templates to M
         path('stock_detailed/<str:id>', stock_detailed, name="stock-detailed"),
 
     ]
-    
- 
- 
+
+
+
    <img width="250" alt="Screen Shot 2022-06-06 at 8 53 02 PM" src="https://user-images.githubusercontent.com/106985050/172273013-91c60ec6-b43f-4a47-a102-be2a81bfb82a.png">
 
 
@@ -143,9 +143,9 @@ Add Members App,  Add URLS.py file to Members App with Paths, Add Templates to M
         path('members/', include('django.contrib.auth.urls')),
         path('members/', include('members.urls')),
     ]
-    
-    
-   
+
+
+
 We create first the Login Page HTML. Making it simple and easy for users to Login. Added Bootstrap and Messages for alerts.
 
     {% extends 'base.html' %}
@@ -174,10 +174,10 @@ We create first the Login Page HTML. Making it simple and easy for users to Logi
         </form>
       </div>
     {% endblock %}
-    
+
    <img width="1440" alt="Screen Shot 2022-06-06 at 10 06 08 AM" src="https://user-images.githubusercontent.com/106985050/172273209-65638482-a25f-4502-808f-07166e60ca82.png">
 
-  
+
     # USER LOGIN
     def login_user(request):
         if request.method == 'POST':
@@ -239,7 +239,7 @@ For the Registration we Import UserCreationForms and we follow the same step pro
     </div>
 
     {% endblock %}
-    
+
     # USER REGISTRATION
     def register_user(request):
         if request.method == 'POST':
@@ -316,7 +316,7 @@ For this, a second Web Scraping process is done inside our Views.py, where we co
 
 The project aims to make the user’s journey effective and simple, suggesting Buy whenever the price of a monitored asset crosses its lower limit, and suggesting Sell whenever the price of a monitored asset crosses its upper limit.
 
-For that, AlarmStock Model is Added. 
+For that, AlarmStock Model is Added.
 
 
     class AlarmStock(models.Model):
@@ -393,8 +393,8 @@ A very simple CRUD(Create, Read, Update, Delete) processes to create Alarms for 
             'object': obj
         }
         return render(request, "authenticate/delete_alarm.html", context)
-        
-        
+
+
  There is a detailed view for the User’s Alerts. We get Access to the Edit and Delete Actions.![image](https://user-images.githubusercontent.com/106985050/172273959-c54995f9-6f78-44f0-ab88-fbb5c905cd58.png)
 
 <img width="1301" alt="Screen Shot 2022-06-06 at 10 00 28 AM" src="https://user-images.githubusercontent.com/106985050/172273974-7364d29d-0700-4897-8ad9-48759533c361.png">
@@ -470,7 +470,7 @@ To Automate the Email notification process, Crontab is the tool we choose, lets 
                         subject="Stock Alert - Selling Opportunity",
                         message=f"Selling Opportunity for {alarm.stock.title} - Selling at: {alarm.selling_at} Current Price at {stock.price}",
                         from_email=settings.EMAIL_HOST_USER,
-                        recipient_list=[settings.RECIPIENT_ADDRESS]
+                        recipient_list=[settings.RECIPIENT_ADDRESS] // alarm.user.email
                     )
                     alarm.status = "SELL"
                 else:
@@ -479,7 +479,7 @@ To Automate the Email notification process, Crontab is the tool we choose, lets 
                 alarm.save()
 
 
-Email Notification Every 1 MINUTE for a Buying opportunity. Set every 1 MINUTE for Testing Purposes.
+Email Notification Every 1 MINUTE and the RECIPIENT_ADDRESS is set with a fixed email address Testing Purposes.
 
 
 <img width="1063" alt="Screen Shot 2022-06-11 at 2 24 00 AM" src="https://user-images.githubusercontent.com/26658714/173176234-e8e1d25f-bc4e-4f5c-9bdb-d64e6d2c94c7.png">
@@ -503,9 +503,9 @@ These was added to gitignore file.
       .DS_Store
       assets/__pycache__
       scraping/__pycache__
-      
+
  To boot up a web dyno, and to migrate the db, Profile was added to our Root folder.
- 
+
      web: gunicorn jobs.wsgi
     release: python manage.py migrate
 
@@ -516,8 +516,3 @@ These was added to gitignore file.
 <img width="395" alt="Screen Shot 2022-06-06 at 7 55 22 PM" src="https://user-images.githubusercontent.com/106985050/172274578-1d57ecf4-3c7c-414c-b9a2-293c1d9258fc.png">
 
 After pushing to Heroku, in Resource Tab of the main view, I looked for Heroku Scheduler to schedule our main Web Scraping process every 1 hour everyday. Keeping the latest data from Investing.com coming in.
-
-
-
-
-

@@ -1,6 +1,6 @@
 # stock-alert-b3
 
-O objetivo deste Projeto é auxiliar um investidor em suas decisões de compra/venda de ativos. Para tanto, ele deve 
+O objetivo deste Projeto é auxiliar um investidor em suas decisões de compra/venda de ativos. Para tanto, ele deve
 registrar periodicamente o preço atual dos ativos da B3 e também notificar, por e-mail, se houver oportunidade de negociação.
 
 
@@ -9,7 +9,7 @@ O primeiro passo para desenvolver este projeto é definir de onde obter nossas i
 A investing.com foi a minha melhor opção para consultar os preços armazenados, Salvar no BD, configurar os ativos a serem monitorados e parametrizar os túneis de preços para cada ativo e verificar a frequência de cada ativo.
 
 
-    
+
     class Stock(models.Model):
     url = models.CharField(max_length=100,unique=True,null=True)
     title = models.CharField(max_length=250, unique=True)
@@ -27,11 +27,11 @@ A investing.com foi a minha melhor opção para consultar os preços armazenados
         ordering = ['title']
     class Admin:
         pass
- 
+
  Isso é o que vamos agendar automaticamente no nível de infraestrutura para automatizar o Web Scraping usando BeautifulSoup4, evitando as duplicates e atualizando automaticamente os dados se houver alguma alteração chamando:
- 
+
  python manage.py scrape
- 
+
     from django.core.management.base import BaseCommand
 
     import requests
@@ -92,7 +92,7 @@ A investing.com foi a minha melhor opção para consultar os preços armazenados
                 )
                 print('%s Created' % (name,))
         self.stdout.write( 'job complete' )
-        
+
 
 
 
@@ -127,9 +127,9 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
         path('stock_detailed/<str:id>', stock_detailed, name="stock-detailed"),
 
     ]
-    
- 
- 
+
+
+
    <img width="250" alt="Screen Shot 2022-06-06 at 8 53 02 PM" src="https://user-images.githubusercontent.com/106985050/172273013-91c60ec6-b43f-4a47-a102-be2a81bfb82a.png">
 
 
@@ -144,9 +144,9 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
         path('members/', include('django.contrib.auth.urls')),
         path('members/', include('members.urls')),
     ]
-    
+
   Criamos primeiro o HTML da página de login. Tornando simples e fácil para os usuários fazerem login. Adicionado Bootstrap e Mensagens para alertas.
-  
+
     {% extends 'base.html' %}
 
     {% block content %}
@@ -173,10 +173,10 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
         </form>
       </div>
     {% endblock %}
-    
+
    <img width="1440" alt="Screen Shot 2022-06-06 at 10 06 08 AM" src="https://user-images.githubusercontent.com/106985050/172273209-65638482-a25f-4502-808f-07166e60ca82.png">
 
-  
+
     # USER LOGIN
     def login_user(request):
         if request.method == 'POST':
@@ -199,10 +199,10 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
         logout(request)
         messages.success(request,'You were Logged out!')
         return redirect('home')
-        
-        
+
+
   Para o Registro importamos UserCreationForms e seguimos a mesma etapa do processo de registro, levando em consideração todos os requisitos em nosso register_user em views.py.
-  
+
     {% extends 'base.html' %}
 
     {% block content %}
@@ -239,7 +239,7 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
     </div>
 
     {% endblock %}
-    
+
     # USER REGISTRATION
     def register_user(request):
         if request.method == 'POST':
@@ -256,9 +256,9 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
             form = UserCreationForm()
 
     return render(request, 'authenticate/register_user.html', { 'form': form  })
-    
-    
-    
+
+
+
 Em nossas visualizações iniciais, os resultados de Web Scraping são exibidos com todos os detalhes de: último preço, máximo, mínimo, variação, variation percentage e a data de criação (será atualizada toda vez que esta task for realizada, depois configuramos a frequency de atualizacao no Heroku).
 
 Exibindo um pequeno 'Dashboard' para usuários logados, com as informações do perfil e os alertas atuais do usuário.
@@ -333,9 +333,9 @@ Para isso, o modelo AlarmStock.
 
         def __str__(self):
             return self.stock.title
-            
+
   Um processo CRUD (Create, Read, Update, Delete) muito simples para criar alarms para o usuário.
-  
+
      # READ
     def my_alarms(request):
         user = request.user
@@ -396,7 +396,7 @@ Para isso, o modelo AlarmStock.
             'object': obj
         }
         return render(request, "authenticate/delete_alarm.html", context)
-        
+
 Uma vista detalhada dos Alertas do Usuário. Obtemos acesso às ações de edição e exclusão.
 
 <img width="1301" alt="Screen Shot 2022-06-06 at 10 00 28 AM" src="https://user-images.githubusercontent.com/106985050/172273974-7364d29d-0700-4897-8ad9-48759533c361.png">
@@ -407,7 +407,7 @@ Em settings.py para fazer a notificação por e-mail com sucesso, primeiro preci
 
 O arquivo .env contém todos os pares Key-Pair para usá-lo em nosso arquivo Cron.py, onde compararemos o preço atual da ação com o nosso a cada 30 minutos.
 
-.env 
+.env
 
     EMAIL_HOST_USER=paolo@email.com
     EMAIL_HOST_PASSWORD='password'
@@ -472,7 +472,7 @@ Para automatizar o processo de notificação por e-mail, o Crontab é a ferramen
                             settings.EMAIL_HOST_USER,
                             ['user.email'],
                         )
-Notificação por e-mail a cada 1 MINUTO para uma oportunidade de compra. Defina a cada 1 MINUTO para fins de teste.
+Notificação por e-mail a cada 1 MINUTO para uma oportunidade de compra. Email foi definido com uma address fixa para testar a funcionalidade.
 
 <img width="1063" alt="Screen Shot 2022-06-11 at 2 24 00 AM" src="https://user-images.githubusercontent.com/26658714/173176234-e8e1d25f-bc4e-4f5c-9bdb-d64e6d2c94c7.png">
 
@@ -489,14 +489,14 @@ Estes foram adicionados ao arquivo gitignore.
      .DS_Store
       assets/__pycache__
       scraping/__pycache__
-      
- 
+
+
  Para inicializar um web dyno e migrar o banco de dados, o perfil foi adicionado à nossa Root file.
 
- 
+
      web: gunicorn jobs.wsgi
     release: python manage.py migrate
-    
+
  <img width="1243" alt="Screen Shot 2022-06-06 at 7 54 20 PM" src="https://user-images.githubusercontent.com/106985050/172274519-667e97dc-a5fa-4313-b28e-766f126ac559.png">
 
 <img width="395" alt="Screen Shot 2022-06-06 at 7 55 22 PM" src="https://user-images.githubusercontent.com/106985050/172274578-1d57ecf4-3c7c-414c-b9a2-293c1d9258fc.png">
