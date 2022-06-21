@@ -35,9 +35,13 @@ class Command(BaseCommand):
 
 
             try:
+                 # Try to get the title of the Stock
                 stock = Stock.objects.get(title=name)
                 stock_updated = Stock.objects.get(id=stock.id)
+
+                # If it's found, then update the Stock Fields.
                 stock_updated.url = detailed_url
+                # Convert String Scraped to Float
                 stock_updated.price = float(ultimo.replace(",","."))
                 stock_updated.max = float(high.replace(",","."))
                 stock_updated.min = float(low.replace(",","."))
@@ -47,6 +51,7 @@ class Command(BaseCommand):
 
                 print('%s Updated' % (name,))
             except:
+                # If does not exists, then create a New Instance
                 Stock.objects.create(
                     url = detailed_url,
                     title = name,

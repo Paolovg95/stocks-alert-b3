@@ -20,5 +20,4 @@ urlpatterns = [
     path('update_alarm/<str:id>', update_alarm, name="update-alarm"),
     path('delete_alarm/<str:id>', delete_alarm, name="delete-alarm"),
     path('stock_detailed/<str:id>', stock_detailed, name="stock-detailed"),
-
 ]
