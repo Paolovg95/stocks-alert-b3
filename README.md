@@ -175,9 +175,6 @@ We create first the Login Page HTML. Making it simple and easy for users to Logi
       </div>
     {% endblock %}
 
-   <img width="1440" alt="Screen Shot 2022-06-06 at 10 06 08 AM" src="https://user-images.githubusercontent.com/106985050/172273209-65638482-a25f-4502-808f-07166e60ca82.png">
-
-
     # USER LOGIN
     def login_user(request):
         if request.method == 'POST':
@@ -215,23 +212,6 @@ For the Registration we Import UserCreationForms and we follow the same step pro
       <form action="{% url 'register_user' %}" method=POST>
         {% csrf_token %}
         {{ form.as_p }}
-        <!-- Bootstrap -->
-        <!-- <div class="form-group p-3">
-          <label for="exampleInputEmail1">Username</label>
-          <input type="text" class="form-control" name="username" aria-describedby="emailHelp" placeholder="Enter email">
-        </div>
-        <div class="form-group p-3">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" name="password" placeholder="Password">
-        </div>
-        <div class="form-group p-3">
-          <label for="exampleInputPassword1">ConfirmPassword</label>
-          <input type="password" class="form-control" name="password" placeholder="Password">
-        </div>
-        <div class="form-check p-3">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-          <label class="form-check-label" for="exampleCheck1">Check me out</label>
-        </div> -->
         <button type="submit" class="btn btn-primary">Submit</button>
         <br></br>
 
