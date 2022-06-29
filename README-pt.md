@@ -215,23 +215,6 @@ Adicione o aplicativo de membros, adicione o arquivo URLS.py ao aplicativo de me
       <form action="{% url 'register_user' %}" method=POST>
         {% csrf_token %}
         {{ form.as_p }}
-        <!-- Bootstrap -->
-        <!-- <div class="form-group p-3">
-          <label for="exampleInputEmail1">Username</label>
-          <input type="text" class="form-control" name="username" aria-describedby="emailHelp" placeholder="Enter email">
-        </div>
-        <div class="form-group p-3">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" name="password" placeholder="Password">
-        </div>
-        <div class="form-group p-3">
-          <label for="exampleInputPassword1">ConfirmPassword</label>
-          <input type="password" class="form-control" name="password" placeholder="Password">
-        </div>
-        <div class="form-check p-3">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-          <label class="form-check-label" for="exampleCheck1">Check me out</label>
-        </div> -->
         <button type="submit" class="btn btn-primary">Submit</button>
         <br></br>
 
